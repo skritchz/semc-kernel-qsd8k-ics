@@ -52,6 +52,8 @@
 #include <net/bluetooth/hci_core.h> /* event notifications */
 #include "hci_uart.h"
 
+
+
 #define BT_SLEEP_DBG
 #ifndef BT_SLEEP_DBG
 #define BT_DBG(fmt, arg...)
@@ -152,8 +154,7 @@ static inline int bluesleep_can_sleep(void)
 {
 	/* check if MSM_WAKE_BT_GPIO and BT_WAKE_MSM_GPIO are both deasserted */
 	return gpio_get_value(bsi->ext_wake) &&
-		gpio_get_value(bsi->host_wake) &&
-		(bsi->uport != NULL);
+		gpio_get_value(bsi->host_wake);
 }
 
 void bluesleep_sleep_wakeup(void)
@@ -176,6 +177,11 @@ void bluesleep_sleep_wakeup(void)
  */
 static void bluesleep_sleep_work(struct work_struct *work)
 {
+    if(bsi->uport == NULL)
+    {
+        // We can't do anythin hci has called unregister
+        return;
+    }
 	if (bluesleep_can_sleep()) {
 		/* already asleep, this is an error case */
 		if (test_bit(BT_ASLEEP, &flags)) {
@@ -319,7 +325,6 @@ static void bluesleep_tx_timer_expire(unsigned long data)
 static irqreturn_t bluesleep_hostwake_isr(int irq, void *dev_id)
 {
 	gpio_clear_detect_status(bsi->host_wake_irq);
-
 	/* schedule a tasklet to handle the change in the host wake line */
 	tasklet_schedule(&hostwake_task);
 	return IRQ_HANDLED;
