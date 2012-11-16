@@ -180,6 +180,7 @@ static void bluesleep_sleep_work(struct work_struct *work)
     if(bsi->uport == NULL)
     {
         // We can't do anythin hci has called unregister
+        BT_DBG("%s, no uport so just return. flags %ld\n", __func__, flags);
         return;
     }
 	if (bluesleep_can_sleep()) {
@@ -269,14 +270,18 @@ static int bluesleep_hci_event(struct notifier_block *this,
 
 	switch (event) {
 	case HCI_DEV_REG:
+        BT_DBG("%s HCI_DEV_REG\n", __func__);
 		if (!bluesleep_hdev) {
+            BT_DBG("%s HCI_DEV_REG new hdev\n", __func__);
 			bluesleep_hdev = hdev;
 			hu  = (struct hci_uart *) hdev->driver_data;
 			state = (struct uart_state *) hu->tty->driver_data;
 			bsi->uport = state->port;
+            bluesleep_sleep_work(NULL);
 		}
 		break;
 	case HCI_DEV_UNREG:
+        BT_DBG("%s HCI_DEV_UNREG\n", __func__);
 		bluesleep_hdev = NULL;
 		bsi->uport = NULL;
 		break;
@@ -392,9 +397,12 @@ static void bluesleep_stop(void)
 {
 	unsigned long irq_flags;
 
+    BT_DBG("in");
+
 	spin_lock_irqsave(&rw_lock, irq_flags);
 
 	if (!test_bit(BT_PROTO, &flags)) {
+        BT_DBG("BT_PROTO bit not set");
 		spin_unlock_irqrestore(&rw_lock, irq_flags);
 		return;
 	}
@@ -405,6 +413,7 @@ static void bluesleep_stop(void)
 	clear_bit(BT_PROTO, &flags);
 
 	if (test_bit(BT_ASLEEP, &flags)) {
+        BT_DBG("Clear asleep bit");
 		clear_bit(BT_ASLEEP, &flags);
 		hsuart_power(1);
 	}
@@ -705,7 +714,7 @@ static int __init bluesleep_init(void)
 		retval = -ENOMEM;
 		goto fail;
 	}
-
+    BT_DBG("Bluetooth init");
 	flags = 0; /* clear all status bits */
 
 	/* Initialize spinlock. */
