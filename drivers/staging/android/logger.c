@@ -94,7 +94,7 @@ static struct kset *logger_kset;
 unsigned char logger_default_priority = LOG_PRIORITY_VERBOSE;
 EXPORT_SYMBOL(logger_default_priority);
 
-int logger_default_enabled = 1;
+bool logger_default_enabled = true;
 EXPORT_SYMBOL(logger_default_enabled);
 
 MODULE_PARM_DESC(default_priority,
