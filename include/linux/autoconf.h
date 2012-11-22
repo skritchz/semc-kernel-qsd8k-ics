@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.29
- * Wed Nov 21 07:07:54 2012
+ * Wed Nov 21 22:50:34 2012
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -472,6 +472,7 @@
 #define CONFIG_MODULE_FORCE_UNLOAD 1
 #define CONFIG_RTC_INTF_DEV 1
 #define CONFIG_LCD_CLASS_DEVICE 1
+#define CONFIG_MSM_KGSL_GPUMMU 1
 #define CONFIG_PMIC_TIME 1
 #define CONFIG_PACKET 1
 #define CONFIG_MSM_RPCSERVER_WATCHDOG 1

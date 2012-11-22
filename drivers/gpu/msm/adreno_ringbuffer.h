@@ -62,9 +62,13 @@ struct adreno_ringbuffer {
 	uint32_t timestamp;
 };
 
+#define writel_relaxed(v, c) ((void)__raw_writel((__force u32) \
+				cpu_to_le32(v), __mem_pci(c)))
+
+
 #define GSL_RB_WRITE(ring, gpuaddr, data) \
 	do { \
-		writel_relaxed(data, ring); \
+		*ring = data; \
 		wmb(); \
 		kgsl_cffdump_setmem(gpuaddr, data, 4); \
 		ring++; \
@@ -93,7 +97,7 @@ struct adreno_ringbuffer {
 #define GSL_RB_CNTL_NO_UPDATE 0x0 /* enable */
 #define GSL_RB_GET_READPTR(rb, data) \
 	do { \
-		*(data) = readl_relaxed(&(rb)->memptrs->rptr); \
+		*(data) = rb->memptrs->rptr; \
 	} while (0)
 #else
 #define GSL_RB_CNTL_NO_UPDATE 0x1 /* disable */
