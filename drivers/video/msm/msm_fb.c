@@ -51,7 +51,9 @@
 #define INIT_IMAGE_FILE "/logo.rle"
 extern int load_565rle_image(char *filename);
 #endif
-
+#ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
+#define MSM_FB_NUM  3
+#endif
 static unsigned char *fbram;
 static unsigned char *fbram_phys;
 static int fbram_size;
@@ -552,7 +554,7 @@ static int msm_fb_blank_sub(int blank_mode, struct fb_info *info,
 	case FB_BLANK_UNBLANK:
 		if (!mfd->panel_power_on) {
 #if !defined(CONFIG_FB_MSM_MDDI_TMD_NT35580)
-			mdelay(100);
+			mdelay(16);
 #endif
 			ret = pdata->on(mfd->pdev);
 			if (ret == 0) {
@@ -612,7 +614,7 @@ static int msm_fb_blank_sub(int blank_mode, struct fb_info *info,
 				pdata->panel_ext->backlight_ctrl(false);
 #endif
 
-			mdelay(100);
+			mdelay(16);
 			ret = pdata->off(mfd->pdev);
 			if (ret)
 				mfd->panel_power_on = curr_pwr_state;
@@ -2294,6 +2296,19 @@ static int msmfb_overlay_unset(struct fb_info *info, unsigned long *argp)
 	return mdp4_overlay_unset(info, ndx);
 }
 
+static int msmfb_overlay_commit(struct fb_info *info, unsigned long *argp)
+{
+    int ret, ndx;
+
+    ret = copy_from_user(&ndx, argp, sizeof(ndx));
+    if (ret) {
+        pr_err("%s: ioctl failed\n", __func__);
+        return ret;
+    }
+
+    return mdp4_overlay_commit(info, ndx);
+}
+
 static int msmfb_overlay_play(struct fb_info *info, unsigned long *argp)
 {
 	int	ret;
@@ -2419,6 +2434,11 @@ static int msm_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		ret = msmfb_overlay_unset(info, argp);
 		up(&msm_fb_ioctl_ppp_sem);
 		break;
+    case MSMFB_OVERLAY_COMMIT:
+        down(&msm_fb_ioctl_ppp_sem);
+        ret = msmfb_overlay_commit(info, argp);
+        up(&msm_fb_ioctl_ppp_sem);
+        break;
 	case MSMFB_OVERLAY_PLAY:
 		down(&msm_fb_ioctl_ppp_sem);
 		ret = msmfb_overlay_play(info, argp);
@@ -2631,6 +2651,20 @@ void msm_fb_add_device(struct platform_device *pdev)
 	if (!pdata)
 		return;
 	type = pdata->panel_info.type;
+#if defined MSM_FB_NUM
+    /*
+     * over written fb_num which defined
+     * at panel_info
+     *
+     */
+    if (type == HDMI_PANEL || type == DTV_PANEL || type == TV_PANEL)
+        pdata->panel_info.fb_num = 1;
+    else
+        pdata->panel_info.fb_num = MSM_FB_NUM;
+
+    MSM_FB_INFO("setting pdata->panel_info.fb_num to %d. type: %d\n",
+            pdata->panel_info.fb_num, type);
+#endif
 	fb_num = pdata->panel_info.fb_num;
 
 	if (fb_num <= 0)

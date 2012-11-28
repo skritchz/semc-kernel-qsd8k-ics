@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.29
- * Wed Nov 21 22:50:34 2012
+ * Tue Nov 27 11:22:36 2012
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -263,6 +263,7 @@
 #define CONFIG_NF_NAT_PROTO_SCTP 1
 #define CONFIG_NETFILTER_XT_MATCH_LIMIT 1
 #define CONFIG_NETFILTER_NETLINK_LOG 1
+#define CONFIG_MSM_HW3D 1
 #define CONFIG_RAMZSWAP_STATS 1
 #define CONFIG_SCSI_DMA 1
 #define CONFIG_IP_NF_TARGET_REDIRECT 1

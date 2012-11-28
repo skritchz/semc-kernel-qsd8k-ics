@@ -441,7 +441,7 @@ end:
 	KGSL_PWR_WARN(device, "resume end\n");
 	return status;
 }
-
+#if 0//TODO fix suspend issue
 static int kgsl_suspend(struct device *dev)
 {
 
@@ -455,6 +455,7 @@ static int kgsl_resume(struct device *dev)
 	struct kgsl_device *device = dev_get_drvdata(dev);
 	return kgsl_resume_device(device);
 }
+#endif//suspend issue
 
 static int kgsl_runtime_suspend(struct device *dev)
 {
@@ -467,8 +468,8 @@ static int kgsl_runtime_resume(struct device *dev)
 }
 
 const struct dev_pm_ops kgsl_pm_ops = {
-	.suspend = kgsl_suspend,
-	.resume = kgsl_resume,
+//	.suspend = kgsl_suspend,
+//	.resume = kgsl_resume,
 	.runtime_suspend = kgsl_runtime_suspend,
 	.runtime_resume = kgsl_runtime_resume,
 };
