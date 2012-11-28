@@ -54,11 +54,14 @@ enum {		/* display */
 };
 
 enum {
-	LCDC_RGB_INTF,
-	DTV_INTF = LCDC_RGB_INTF,
-	MDDI_LCDC_INTF,
-	MDDI_INTF,
-	EBI2_INTF
+	LCDC_RGB_INTF,			/* 0 */
+	DTV_INTF = LCDC_RGB_INTF,	/* 0 */
+	MDDI_LCDC_INTF,			/* 1 */
+	MDDI_INTF,			/* 2 */
+	EBI2_INTF,			/* 3 */
+	TV_INTF = EBI2_INTF,		/* 3 */
+	DSI_VIDEO_INTF,
+	DSI_CMD_INTF
 };
 
 enum {
@@ -101,6 +104,7 @@ enum {
 #define INTR_PRIMARY_INTF_UDERRUN	BIT(8)
 #define INTR_EXTERNAL_VSYNC		BIT(9)
 #define INTR_EXTERNAL_INTF_UDERRUN	BIT(10)
+#define INTR_PRIMARY_READ_PTR		BIT(11)
 #define INTR_DMA_P_HISTOGRAM		BIT(17)
 
 /* histogram interrupts */
@@ -118,13 +122,14 @@ enum {
 
 enum {
 	OVERLAY_PIPE_RGB1,
-	OVERLAY_PIPE_RGB2
+	OVERLAY_PIPE_RGB2,
+	OVERLAY_PIPE_VG1,	/* video/graphic */
+	OVERLAY_PIPE_VG2,
+	OVERLAY_PIPE_MAX
 };
 
-enum {
-	OVERLAY_PIPE_VG1,	/* video/graphic */
-	OVERLAY_PIPE_VG2
-};
+/* 2 VG pipes can be shared by RGB and VIDEO */
+#define MDP4_MAX_PIPE 	(OVERLAY_PIPE_MAX + 2)
 
 enum {
 	OVERLAY_TYPE_RGB,
@@ -133,7 +138,8 @@ enum {
 
 enum {
 	MDP4_MIXER0,
-	MDP4_MIXER1
+	MDP4_MIXER1,
+	MDP4_MIXER_MAX
 };
 
 #define MDP4_MAX_MIXER	2
@@ -149,7 +155,8 @@ enum {
 	MDP4_MIXER_STAGE_BASE,
 	MDP4_MIXER_STAGE0,	/* zorder 0 */
 	MDP4_MIXER_STAGE1,	/* zorder 1 */
-	MDP4_MIXER_STAGE2	/* zorder 2 */
+	MDP4_MIXER_STAGE2,	/* zorder 2 */
+	MDP4_MIXER_STAGE_MAX
 };
 
 #define MDP4_MAX_STAGE	4
@@ -189,6 +196,7 @@ enum {
 #define MDP4_FORMAT_ALPHA_ENABLE	BIT(8)
 
 #define MDP4_OP_DEINT_ODD_REF  	BIT(19)
+#define MDP4_OP_DEINT_EN	BIT(18)
 #define MDP4_OP_IGC_LUT_EN	BIT(16)
 #define MDP4_OP_DITHER_EN     	BIT(15)
 #define MDP4_OP_FLIP_UD		BIT(14)
@@ -356,6 +364,8 @@ void mdp4_mixer_gc_lut_setup(int mixer_num);
 void mdp4_fetch_cfg(uint32 clk);
 uint32 mdp4_rgb_igc_lut_cvt(uint32 ndx);
 void mdp4_vg_qseed_init(int);
+
+int mdp4_mixer_info(int mixer_num, struct mdp_mixer_info *info);
 
 #ifdef CONFIG_DEBUG_FS
 int mdp4_debugfs_init(void);

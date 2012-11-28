@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.29
-# Wed Nov 21 22:50:34 2012
+# Tue Nov 27 11:10:14 2012
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1348,6 +1348,7 @@ CONFIG_FB_MSM=y
 CONFIG_FB_MSM_BACKLIGHT=y
 # CONFIG_FB_MSM_LOGO is not set
 CONFIG_FB_MSM_LCDC_HW=y
+CONFIG_FB_MSM_TRIPLE_BUFFER=y
 # CONFIG_FB_MSM_MDP22 is not set
 # CONFIG_FB_MSM_MDP30 is not set
 CONFIG_FB_MSM_MDP31=y
