@@ -1,7 +1,7 @@
 /*
  * Automatically generated C config: don't edit
  * Linux kernel version: 2.6.29
- * Wed Nov 28 22:36:26 2012
+ * Fri Nov 30 06:50:15 2012
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_VIDEO_V4L1_COMPAT 1
@@ -387,7 +387,7 @@
 #define CONFIG_VIRT_TO_BUS 1
 #define CONFIG_MSM_SMD_TTY 1
 #define CONFIG_MD 1
-#define CONFIG_LOCALVERSION "$(KERNEL_LOCAL_VERSION)-FXP"
+#define CONFIG_LOCALVERSION "$(KERNEL_LOCAL_VERSION)-CMX10"
 #define CONFIG_USB_MSM_OTG_72K 1
 #define CONFIG_SCSI_SCAN_ASYNC 1
 #define CONFIG_ZLIB_INFLATE 1
